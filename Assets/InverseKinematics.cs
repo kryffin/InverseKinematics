@@ -15,6 +15,11 @@ public class InverseKinematics : MonoBehaviour
 
     public float constraintRadius;
 
+    public SpriteRenderer sr;
+    public SpriteRenderer handSr;
+    public Sprite peepoHappy;
+    public Sprite peepoSad;
+
     private void Start()
     {
         points = new List<Vector3>();
@@ -22,20 +27,26 @@ public class InverseKinematics : MonoBehaviour
 
         Selection.SetActiveObjectWithContext(target, this); //default selection on Play is the target
         UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView)); //default view on Play is the Scene View
+
+        handSr.flipX = true;
     }
 
     private void ColorLine(Vector3 end)
     {
         if (Vector3.Distance(end, target.position) <= 0.1f)
         {
-            lr.startColor = Color.green;
-            lr.endColor = Color.green;
+            lr.startColor = Color.yellow;
+            lr.endColor = Color.yellow;
+            sr.sprite = peepoSad;
         }
         else
         {
             lr.startColor = Color.red;
             lr.endColor = Color.red;
+            sr.sprite = peepoHappy;
         }
+
+        sr.size = new Vector2(2f, 2f);
     }
 
     private void DrawAngles(List<Vector3> line)
@@ -86,7 +97,7 @@ public class InverseKinematics : MonoBehaviour
         foreach (Transform t in transform)
             t.position = res[nb++];
 
-        ColorLine(res[res.Count-1]);
+        ColorLine(res[res.Count - 1]);
 
         if (drawDebug) DrawAngles(res);
     }
