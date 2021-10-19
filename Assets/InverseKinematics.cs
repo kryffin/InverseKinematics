@@ -8,6 +8,8 @@ public class InverseKinematics : MonoBehaviour
     private List<Vector3> points;
     private LineRenderer lr;
 
+    public bool drawDebug = false;
+
     public Transform target;
     public int nbIterations;
 
@@ -86,7 +88,7 @@ public class InverseKinematics : MonoBehaviour
 
         ColorLine(res[res.Count-1]);
 
-        DrawAngles(res);
+        if (drawDebug) DrawAngles(res);
     }
 
     private List<Vector3> BackwardKinematics(List<Vector3> ps)
