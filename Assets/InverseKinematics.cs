@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class InverseKinematics : MonoBehaviour
@@ -14,6 +15,9 @@ public class InverseKinematics : MonoBehaviour
     {
         points = new List<Vector3>();
         lr = GetComponent<LineRenderer>();
+
+        Selection.SetActiveObjectWithContext(target, this); //default selection on Play is the target
+        UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView)); //default view on Play is the Scene View
     }
 
     private void Update()
