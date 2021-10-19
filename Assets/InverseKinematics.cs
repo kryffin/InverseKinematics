@@ -11,6 +11,8 @@ public class InverseKinematics : MonoBehaviour
     public Transform target;
     public int nbIterations;
 
+    public float constraintRadius;
+
     private void Start()
     {
         points = new List<Vector3>();
@@ -18,6 +20,46 @@ public class InverseKinematics : MonoBehaviour
 
         Selection.SetActiveObjectWithContext(target, this); //default selection on Play is the target
         UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView)); //default view on Play is the Scene View
+    }
+
+    private void ColorLine(Vector3 end)
+    {
+        if (Vector3.Distance(end, target.position) <= 0.1f)
+        {
+            lr.startColor = Color.green;
+            lr.endColor = Color.green;
+        }
+        else
+        {
+            lr.startColor = Color.red;
+            lr.endColor = Color.red;
+        }
+    }
+
+    private void DrawAngles(List<Vector3> line)
+    {
+        for (int i = 0; i < line.Count-1; i++)
+        {
+            Vector3 dir = (line[i + 1] - line[i]).normalized;
+
+            Vector3 tmpDir = Quaternion.Euler(constraintRadius, 0f, 0f) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.red);
+
+            tmpDir = Quaternion.Euler(-constraintRadius, 0f, 0f) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.red);
+
+            tmpDir = Quaternion.Euler(0f, constraintRadius, 0f) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.green);
+
+            tmpDir = Quaternion.Euler(0f, -constraintRadius, 0f) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.green);
+
+            tmpDir = Quaternion.Euler(0f, 0f, constraintRadius) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.blue);
+
+            tmpDir = Quaternion.Euler(0f, 0f, -constraintRadius) * dir;
+            Debug.DrawRay(line[i + 1], tmpDir, Color.blue);
+        }
     }
 
     private void Update()
@@ -42,15 +84,9 @@ public class InverseKinematics : MonoBehaviour
         foreach (Transform t in transform)
             t.position = res[nb++];
 
-        if (Vector3.Distance(res[res.Count - 1], target.position) <= 0.1f)
-        {
-            lr.startColor = Color.green;
-            lr.endColor = Color.green;
-        } else
-        {
-            lr.startColor = Color.red;
-            lr.endColor = Color.red;
-        }
+        ColorLine(res[res.Count-1]);
+
+        DrawAngles(res);
     }
 
     private List<Vector3> BackwardKinematics(List<Vector3> ps)
