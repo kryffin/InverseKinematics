@@ -4,35 +4,148 @@ using UnityEngine;
 public class Particles : MonoBehaviour
 {
 
-    private List<GameObject> particles;
+    private List<Particle> _particles;
 
-    public int nbParticles;
-    public GameObject particlePrefab;
-    public float speed;
+    public int NbParticles;
+    public GameObject ParticlePrefab;
 
-    void Start()
+    public float GravityStrength;
+    public float h; //interaction radius
+    public float k; //pressure scale
+    public float rho_zero; //target rho
+
+    public class Particle
     {
-        particles = new List<GameObject>();
+        public GameObject GameObject;
+        public Vector2 PreviousPosition;
+        public Vector2 Velocity;
+        public float Mass;
+        public Color Color;
 
-        for (int i = 0; i < nbParticles; i++)
+        public Particle(GameObject gameObject)
         {
-            Vector3 pos = new Vector3(Random.Range(-8f, 8f), Random.Range(-4f, 4f), 0f);
-            particles.Add(Instantiate(particlePrefab, pos, Quaternion.identity, this.transform));
+            this.GameObject = gameObject;
+            this.PreviousPosition = gameObject.transform.position;
+            this.Velocity = Vector2.zero;
+            this.Mass = 0f;
+            this.Color = Color.white;
+        }
+
+        public Vector2 GetPosition()
+        {
+            return GameObject.transform.position;
+        }
+
+        public void SetPosition(Vector2 pos)
+        {
+            GameObject.transform.position = pos;
         }
     }
 
-    private void UpdateParticles()
+    void Start()
     {
-        foreach (GameObject g in particles)
+        _particles = new List<Particle>();
+
+        for (int i = 0; i < NbParticles; i++)
         {
-            Vector3 motion = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized;
-            g.transform.Translate(motion * speed * Time.deltaTime);
+            Vector3 pos = new Vector3(Random.Range(-8f, 8f), Random.Range(-4f, 4f), 0f);
+            _particles.Add(new Particle(Instantiate(ParticlePrefab, pos, Quaternion.identity, this.transform)));
         }
+    }
+
+    private List<Particle> Neighbors (Particle particle)
+    {
+        List<Particle> neighbors = new List<Particle>();
+
+        foreach (Particle p in _particles)
+        {
+            if (Vector2.Distance(particle.GetPosition(), p.GetPosition()) < h && p.GetPosition() != particle.GetPosition())
+                neighbors.Add(p);
+        }
+
+        return neighbors;
+    }
+
+    private void DoubleDensityRelaxation()
+    {
+        foreach (Particle p in _particles)
+        {
+            float rho = 0;
+
+            List<Particle> neighbors = Neighbors(p);
+
+            //compute density
+            foreach (Particle n in neighbors)
+            {
+                float r = Vector2.Distance(p.GetPosition(), n.GetPosition());
+                float q = r / h;
+                if (q < 1f)
+                    rho = rho + Mathf.Pow((1 - q), 2f);
+            }
+
+            //compute pressure
+            float P = k * (rho - rho_zero);
+            float dx = 0f;
+
+            foreach (Particle n in neighbors)
+            {
+                float r = Vector2.Distance(p.GetPosition(), n.GetPosition());
+                float q = r / h;
+                if (q < 1f)
+                {
+                    //apply displacement
+                    float D = Mathf.Pow(Time.deltaTime, 2f) * (P * (1f - q)) * r;
+                    n.SetPosition(new Vector2(n.GetPosition().x * (D / 2f), n.GetPosition().y * (D / 2f)));
+                    dx = dx - (D / 2f);
+                }
+            }
+            p.SetPosition(new Vector2(p.GetPosition().x + dx, p.GetPosition().y + dx));
+        }
+    }
+
+    private void SimulateParticles()
+    {
+        //apply gravity
+        foreach (Particle p in _particles)
+            p.Velocity = p.Velocity + (Time.deltaTime * (Vector2.down * GravityStrength));
+
+        //modify velocities with pairwise viscosity impulses
+        //ApplyViscosity();
+
+        foreach (Particle p in _particles)
+        {
+            //save previous position
+            p.PreviousPosition = p.GetPosition();
+            //advance to predicted position
+            p.SetPosition(p.GetPosition() + (Time.deltaTime * p.Velocity));
+        }
+
+        //add and remove springs, change rest lengths
+        //AdjustSprings();
+
+        //modify positions according to springs, double density relaxation, and collisions
+        //ApplySpringDisplacement();
+        //DoubleDensityRelaxation();
+        //ResolveCollisions();
+
+        //use previous position to compute next velocity
+        foreach (Particle p in _particles)
+            p.Velocity = (p.GetPosition() - p.PreviousPosition) / Time.deltaTime;
     }
 
     void Update()
     {
-        UpdateParticles();
+        SimulateParticles();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_particles == null) return;
+
+        foreach (Particle p in _particles)
+        {
+            Gizmos.DrawWireSphere(p.GetPosition(), h);
+        }
     }
 
 }

@@ -451,9 +451,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4030a62861dc14f8727b01cd921949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nbParticles: 100
-  particlePrefab: {fileID: 3236151135075229429, guid: d820102e2531f0f4f8c5b38f948e84de, type: 3}
-  speed: 3
+  NbParticles: 100
+  ParticlePrefab: {fileID: 3236151135075229429, guid: d820102e2531f0f4f8c5b38f948e84de, type: 3}
+  GravityStrength: 1
+  h: 1
+  k: 0.5
+  rho_zero: 5
 --- !u!1 &1660390299
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,7 +474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1660390300
 Transform:
   m_ObjectHideFlags: 0
@@ -625,7 +628,7 @@ GameObject:
   m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1684429174
 Transform:
   m_ObjectHideFlags: 0
@@ -692,7 +695,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 1
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
