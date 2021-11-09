@@ -12,17 +12,23 @@ public class Particles : MonoBehaviour
     public Sprite PeepoHappy;
     public Sprite PeepoSad;
 
-    [Range(-5f, 5f)]
-    public float GravityStrength;
+    [Header("Gravity Strength")]
+    [Range(-10f, 10f)]
+    public float g;
 
+    [Header("Interaction Radius")]
     [Range(0f, 15f)]
     public float h; //interaction radius
 
+    [Header("Density")]
     [Range(-5f, 5f)]
     public float k; //pressure scale
 
+    [Header("Target Rho")]
     [Range(0f, 10f)]
     public float rho_zero; //target rho
+
+    [Header("DEBUG")]
 
     public bool DEBUG_DRAW_BOX = true;
     public bool DEBUG_DRAW_RANGES = false;
@@ -121,16 +127,32 @@ public class Particles : MonoBehaviour
         foreach (Particle p in _particles)
         {
             if (p.GetPosition().y > 4.5f)
-                p.SetPosition(new Vector2(p.GetPosition().x, 4.5f));
+            {
+                p.SetPosition(new Vector2(p.GetPosition().x, p.PreviousPosition.y));
+                p.PreviousPosition = new Vector2(p.PreviousPosition.x, p.PreviousPosition.y + (p.GetPosition().y - p.PreviousPosition.y));
+                p.Velocity.y = -p.Velocity.y;
+            }
 
             if (p.GetPosition().y < -4.5f)
-                p.SetPosition(new Vector2(p.GetPosition().x, -4.5f));
+            {
+                p.SetPosition(new Vector2(p.GetPosition().x, p.PreviousPosition.y));
+                p.PreviousPosition = new Vector2(p.PreviousPosition.x, p.PreviousPosition.y + (p.PreviousPosition.y - p.GetPosition().y));
+                p.Velocity.y = -p.Velocity.y;
+            }
 
             if (p.GetPosition().x > 4.5f)
-                p.SetPosition(new Vector2(4.5f, p.GetPosition().y));
+            {
+                p.SetPosition(new Vector2(p.PreviousPosition.x, p.GetPosition().y));
+                p.PreviousPosition = new Vector2(p.PreviousPosition.x + (p.GetPosition().x - p.PreviousPosition.x), p.PreviousPosition.y);
+                p.Velocity.x = -p.Velocity.x;
+            }
 
             if (p.GetPosition().x < -4.5f)
-                p.SetPosition(new Vector2(-4.5f, p.GetPosition().y));
+            {
+                p.SetPosition(new Vector2(p.PreviousPosition.x, p.GetPosition().y));
+                p.PreviousPosition = new Vector2(p.PreviousPosition.x + (p.PreviousPosition.x - p.GetPosition().x), p.PreviousPosition.y);
+                p.Velocity.x = -p.Velocity.x;
+            }
         }
     }
 
@@ -138,7 +160,7 @@ public class Particles : MonoBehaviour
     {
         //apply gravity
         foreach (Particle p in _particles)
-            p.Velocity = p.Velocity + (Time.deltaTime * (Vector2.down * GravityStrength));
+            p.Velocity = p.Velocity + (Time.deltaTime * (Vector2.down * g));
 
         //modify velocities with pairwise viscosity impulses
         //ApplyViscosity();
@@ -167,7 +189,7 @@ public class Particles : MonoBehaviour
         //display
         foreach (Particle p in _particles)
         {
-            p.GameObject.GetComponent<SpriteRenderer>().flipX = p.Velocity.x < 0f;
+            p.GameObject.GetComponent<SpriteRenderer>().flipX = p.Velocity.x > 0f;
             if (Neighbors(p).Count > 0)
                 p.GameObject.GetComponent<SpriteRenderer>().sprite = PeepoHappy;
             else
