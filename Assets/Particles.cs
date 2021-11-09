@@ -30,7 +30,7 @@ public class Particles : MonoBehaviour
 
     [Header("DEBUG")]
 
-    public bool DEBUG_DRAW_BOX = true;
+    public bool DEBUG_DRAW_BOX = false;
     public bool DEBUG_DRAW_RANGES = false;
 
     public class Particle
@@ -68,7 +68,7 @@ public class Particles : MonoBehaviour
         for (int i = 0; i < NbParticles; i++)
         {
             Vector3 pos = new Vector3(Random.Range(-4f, 4f), Random.Range(-4f, 4f), 0f);
-            _particles.Add(new Particle(Instantiate(ParticlePrefab, pos, Quaternion.identity, this.transform)));
+            _particles.Add(new Particle(Instantiate(ParticlePrefab, Random.insideUnitCircle * 2f, Quaternion.identity, this.transform)));
         }
     }
 
