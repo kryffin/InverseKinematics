@@ -9,6 +9,9 @@ public class Particles : MonoBehaviour
     public int NbParticles;
     public GameObject ParticlePrefab;
 
+    public Sprite PeepoHappy;
+    public Sprite PeepoSad;
+
     public float GravityStrength;
     public float h; //interaction radius
     public float k; //pressure scale
@@ -85,7 +88,7 @@ public class Particles : MonoBehaviour
 
             //compute pressure
             float P = k * (rho - rho_zero);
-            float dx = 0f;
+            Vector2 dx = Vector2.zero;
 
             foreach (Particle n in neighbors)
             {
@@ -94,12 +97,12 @@ public class Particles : MonoBehaviour
                 if (q < 1f)
                 {
                     //apply displacement
-                    float D = Mathf.Pow(Time.deltaTime, 2f) * (P * (1f - q)) * r;
-                    n.SetPosition(new Vector2(n.GetPosition().x * (D / 2f), n.GetPosition().y * (D / 2f)));
+                    Vector2 D = Mathf.Pow(Time.deltaTime, 2f) * (P * (1f - q)) * (n.GetPosition() - p.GetPosition()).normalized;
+                    n.SetPosition(n.GetPosition() + (D / 2f));
                     dx = dx - (D / 2f);
                 }
             }
-            p.SetPosition(new Vector2(p.GetPosition().x + dx, p.GetPosition().y + dx));
+            p.SetPosition(p.GetPosition() + dx);
         }
     }
 
@@ -125,12 +128,22 @@ public class Particles : MonoBehaviour
 
         //modify positions according to springs, double density relaxation, and collisions
         //ApplySpringDisplacement();
-        //DoubleDensityRelaxation();
+        DoubleDensityRelaxation();
         //ResolveCollisions();
 
         //use previous position to compute next velocity
         foreach (Particle p in _particles)
             p.Velocity = (p.GetPosition() - p.PreviousPosition) / Time.deltaTime;
+
+        //display
+        foreach (Particle p in _particles)
+        {
+            p.GameObject.GetComponent<SpriteRenderer>().flipX = p.Velocity.x < 0f;
+            if (Neighbors(p).Count > 0)
+                p.GameObject.GetComponent<SpriteRenderer>().sprite = PeepoHappy;
+            else
+                p.GameObject.GetComponent<SpriteRenderer>().sprite = PeepoSad;
+        }
     }
 
     void Update()

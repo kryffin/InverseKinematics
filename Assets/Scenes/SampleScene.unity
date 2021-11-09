@@ -205,7 +205,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -451,9 +451,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4030a62861dc14f8727b01cd921949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NbParticles: 100
+  NbParticles: 55
   ParticlePrefab: {fileID: 3236151135075229429, guid: d820102e2531f0f4f8c5b38f948e84de, type: 3}
-  GravityStrength: 1
+  PeepoHappy: {fileID: 21300000, guid: 18a404e37efd9324d9af8520799a8862, type: 3}
+  PeepoSad: {fileID: 21300000, guid: 99a9c96c5e2c659468cc76e1a5779749, type: 3}
+  GravityStrength: 0
   h: 1
   k: 0.5
   rho_zero: 5
