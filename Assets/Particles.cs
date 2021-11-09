@@ -12,9 +12,16 @@ public class Particles : MonoBehaviour
     public Sprite PeepoHappy;
     public Sprite PeepoSad;
 
+    [Range(-5f, 5f)]
     public float GravityStrength;
+
+    [Range(0f, 15f)]
     public float h; //interaction radius
+
+    [Range(-5f, 5f)]
     public float k; //pressure scale
+
+    [Range(0f, 10f)]
     public float rho_zero; //target rho
 
     public class Particle
