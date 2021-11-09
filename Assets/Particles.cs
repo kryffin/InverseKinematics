@@ -128,35 +128,19 @@ public class Particles : MonoBehaviour
         {
             // Right wall
             if (p.GetPosition().x > 4.25f)
-            {
                 p.SetPosition(new Vector2(p.PreviousPosition.x, p.GetPosition().y));
-                //p.PreviousPosition = new Vector2(p.PreviousPosition.x + (p.GetPosition().x - p.PreviousPosition.x), p.PreviousPosition.y);
-                //p.Velocity.x = -p.Velocity.x;
-            }
 
             // Left wall
             if (p.GetPosition().x < -4.25f)
-            {
                 p.SetPosition(new Vector2(p.PreviousPosition.x, p.GetPosition().y));
-                //p.PreviousPosition = new Vector2(p.PreviousPosition.x + (p.PreviousPosition.x - p.GetPosition().x), p.PreviousPosition.y);
-                //p.Velocity.x = -p.Velocity.x;
-            }
 
             // Ceiling
             if (p.GetPosition().y > 4.25f)
-            {
                 p.SetPosition(new Vector2(p.GetPosition().x, p.PreviousPosition.y));
-                //p.PreviousPosition = new Vector2(p.PreviousPosition.x, p.PreviousPosition.y + (p.GetPosition().y - p.PreviousPosition.y));
-                //p.Velocity.y = -p.Velocity.y;
-            }
 
             // Floor
             if (p.GetPosition().y < -4.25f)
-            {
                 p.SetPosition(new Vector2(p.GetPosition().x, p.PreviousPosition.y));
-                //p.PreviousPosition = new Vector2(p.PreviousPosition.x, p.PreviousPosition.y + (p.PreviousPosition.y - p.GetPosition().y));
-                //p.Velocity.y = -p.Velocity.y;
-            }
         }
     }
 
