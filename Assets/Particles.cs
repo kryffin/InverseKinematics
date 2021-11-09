@@ -24,6 +24,9 @@ public class Particles : MonoBehaviour
     [Range(0f, 10f)]
     public float rho_zero; //target rho
 
+    public bool DEBUG_DRAW_BOX = true;
+    public bool DEBUG_DRAW_RANGES = false;
+
     public class Particle
     {
         public GameObject GameObject;
@@ -58,7 +61,7 @@ public class Particles : MonoBehaviour
 
         for (int i = 0; i < NbParticles; i++)
         {
-            Vector3 pos = new Vector3(Random.Range(-8f, 8f), Random.Range(-4f, 4f), 0f);
+            Vector3 pos = new Vector3(Random.Range(-4f, 4f), Random.Range(-4f, 4f), 0f);
             _particles.Add(new Particle(Instantiate(ParticlePrefab, pos, Quaternion.identity, this.transform)));
         }
     }
@@ -126,6 +129,13 @@ public class Particles : MonoBehaviour
         {
             //save previous position
             p.PreviousPosition = p.GetPosition();
+
+            if (p.GetPosition().y < -4.5f)
+                p.Velocity.y = -p.Velocity.y;
+
+            if (p.GetPosition().x > 4.5f || p.GetPosition().x < -4.5f)
+                p.Velocity.x = -p.Velocity.x;
+
             //advance to predicted position
             p.SetPosition(p.GetPosition() + (Time.deltaTime * p.Velocity));
         }
@@ -162,9 +172,19 @@ public class Particles : MonoBehaviour
     {
         if (_particles == null) return;
 
-        foreach (Particle p in _particles)
+        if (DEBUG_DRAW_RANGES)
         {
-            Gizmos.DrawWireSphere(p.GetPosition(), h);
+            foreach (Particle p in _particles)
+            {
+                Gizmos.DrawWireSphere(p.GetPosition(), h);
+            }
+        }
+
+        if (DEBUG_DRAW_BOX)
+        {
+            Gizmos.DrawLine(new Vector3(-4.5f, 4.5f), new Vector3(-4.5f, -4.5f));
+            Gizmos.DrawLine(new Vector3(-4.5f, -4.5f), new Vector3(4.5f, -4.5f));
+            Gizmos.DrawLine(new Vector3(4.5f, -4.5f), new Vector3(4.5f, 4.5f));
         }
     }
 
