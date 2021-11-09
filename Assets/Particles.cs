@@ -116,6 +116,24 @@ public class Particles : MonoBehaviour
         }
     }
 
+    private void ResolveCollisions()
+    {
+        foreach (Particle p in _particles)
+        {
+            if (p.GetPosition().y > 4.5f)
+                p.SetPosition(new Vector2(p.GetPosition().x, 4.5f));
+
+            if (p.GetPosition().y < -4.5f)
+                p.SetPosition(new Vector2(p.GetPosition().x, -4.5f));
+
+            if (p.GetPosition().x > 4.5f)
+                p.SetPosition(new Vector2(4.5f, p.GetPosition().y));
+
+            if (p.GetPosition().x < -4.5f)
+                p.SetPosition(new Vector2(-4.5f, p.GetPosition().y));
+        }
+    }
+
     private void SimulateParticles()
     {
         //apply gravity
@@ -130,12 +148,6 @@ public class Particles : MonoBehaviour
             //save previous position
             p.PreviousPosition = p.GetPosition();
 
-            if (p.GetPosition().y < -4.5f)
-                p.Velocity.y = -p.Velocity.y;
-
-            if (p.GetPosition().x > 4.5f || p.GetPosition().x < -4.5f)
-                p.Velocity.x = -p.Velocity.x;
-
             //advance to predicted position
             p.SetPosition(p.GetPosition() + (Time.deltaTime * p.Velocity));
         }
@@ -146,7 +158,7 @@ public class Particles : MonoBehaviour
         //modify positions according to springs, double density relaxation, and collisions
         //ApplySpringDisplacement();
         DoubleDensityRelaxation();
-        //ResolveCollisions();
+        ResolveCollisions();
 
         //use previous position to compute next velocity
         foreach (Particle p in _particles)
@@ -185,6 +197,7 @@ public class Particles : MonoBehaviour
             Gizmos.DrawLine(new Vector3(-4.5f, 4.5f), new Vector3(-4.5f, -4.5f));
             Gizmos.DrawLine(new Vector3(-4.5f, -4.5f), new Vector3(4.5f, -4.5f));
             Gizmos.DrawLine(new Vector3(4.5f, -4.5f), new Vector3(4.5f, 4.5f));
+            Gizmos.DrawLine(new Vector3(-4.5f, 4.5f), new Vector3(4.5f, 4.5f));
         }
     }
 

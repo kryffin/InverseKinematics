@@ -451,14 +451,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4030a62861dc14f8727b01cd921949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NbParticles: 150
+  NbParticles: 200
   ParticlePrefab: {fileID: 3236151135075229429, guid: d820102e2531f0f4f8c5b38f948e84de, type: 3}
   PeepoHappy: {fileID: 21300000, guid: 18a404e37efd9324d9af8520799a8862, type: 3}
   PeepoSad: {fileID: 21300000, guid: 99a9c96c5e2c659468cc76e1a5779749, type: 3}
-  GravityStrength: 2.55
-  h: 1
-  k: 0.5
-  rho_zero: 5
+  GravityStrength: 5
+  h: 0.5
+  k: 2
+  rho_zero: 0.5
   DEBUG_DRAW_BOX: 1
   DEBUG_DRAW_RANGES: 0
 --- !u!1 &1660390299
